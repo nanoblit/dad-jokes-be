@@ -17,6 +17,10 @@ async function addUser(data) {
   return getUserById(id);
 }
 
+function getAllJokes() {
+  return db('jokes');
+}
+
 function getJokeById(id) {
   return db('jokes')
     .where({ id })
@@ -37,5 +41,5 @@ async function removeJoke(id) {
 }
 
 module.exports = {
-  getUserByName, addUser, addJoke, getJokeById, removeJoke,
+  getUserByName, addUser, getAllJokes, addJoke, getJokeById, removeJoke,
 };

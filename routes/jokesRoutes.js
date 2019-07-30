@@ -5,6 +5,24 @@ const authenticate = require('../middleware/authenticate');
 
 const router = express.Router();
 
+router.get('/', authenticate, async (req, res, next) => {
+  try {
+    const userId = req.user ? req.user.sub : undefined;
+    const jokes = await db.getAllJokes();
+    const jokesToSend = jokes.filter(joke => {
+      if (joke.isPrivate && joke.userId === userId) {
+        return true;
+      } if (joke.isPrivate) {
+        return false;
+      }
+      return true;
+    });
+    res.status(200).json(jokesToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/', authenticate, async (req, res, next) => {
   try {
     const { body } = req;
@@ -27,7 +45,8 @@ router.delete('/:id', authenticate, async (req, res, next) => {
     const joke = await db.getJokeById(id);
     if (!joke) {
       res.status(404).json({ error: 'Joke not found' });
-    } if (joke.userId !== userId) {
+    }
+    if (joke.userId !== userId) {
       res.status(401).json({ error: 'You are not authorized to delete this joke' });
     } else {
       await db.removeJoke(id);
