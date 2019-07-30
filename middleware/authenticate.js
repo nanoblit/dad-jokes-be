@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const jwtKey = process.env.JWT_SECRET || 's564fs654ADsd65ADShliul.%@$^tdfdsg$^kit56456';
+const jwtKey = process.env.JWT_SECRET;
 
 function authenticate(req, res, next) {
   const token = req.headers.authorization;
@@ -10,7 +10,7 @@ function authenticate(req, res, next) {
       if (err) {
         res.status(401).json(err);
       } else {
-        req.decoded = decoded;
+        req.user = decoded;
         next();
       }
     });
@@ -21,6 +21,4 @@ function authenticate(req, res, next) {
   }
 }
 
-module.exports = {
-  authenticate,
-};
+module.exports = authenticate;

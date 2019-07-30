@@ -28,12 +28,14 @@ async function addJoke(data) {
   return getJokeById(id);
 }
 
-function removeJoke(id) {
-  return db('jokes')
+async function removeJoke(id) {
+  const joke = await getJokeById(id);
+  await db('jokes')
     .where({ id })
     .del();
+  return joke;
 }
 
 module.exports = {
-  getUserByName, addUser, addJoke, removeJoke,
+  getUserByName, addUser, addJoke, getJokeById, removeJoke,
 };
