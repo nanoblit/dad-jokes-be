@@ -8,15 +8,15 @@ const router = express.Router();
 
 function generateToken(user) {
   const payload = {
+    username: user.username,
     sub: user.id,
-    username: user.name,
   };
 
   const options = {
     expiresIn: '1d',
   };
 
-  return jwt.sign(payload, 'Some sweet secret', options);
+  return jwt.sign(payload, process.env.JWT_SECRET, options);
 }
 
 router.post('/signup', async (req, res, next) => {
@@ -43,7 +43,7 @@ router.post('/signin', async (req, res, next) => {
     if (!user || !bcrypt.compare(password, user.password)) {
       res.status(401).json({ error: 'Wrong username or password' });
     } else {
-      const token = generateToken(req.body);
+      const token = generateToken(user);
       res.status(200).json({ message: 'Logged in', token });
     }
   } catch (error) {

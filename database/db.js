@@ -17,10 +17,18 @@ async function addUser(data) {
   return getUserById(id);
 }
 
+function getAllJokes() {
+  return db('jokes');
+}
+
 function getJokeById(id) {
   return db('jokes')
     .where({ id })
     .first();
+}
+
+function getUsersJokes(userId) {
+  return db('jokes').where({ userId });
 }
 
 async function addJoke(data) {
@@ -28,12 +36,20 @@ async function addJoke(data) {
   return getJokeById(id);
 }
 
-function removeJoke(id) {
-  return db('jokes')
+async function removeJoke(id) {
+  const joke = await getJokeById(id);
+  await db('jokes')
     .where({ id })
     .del();
+  return joke;
 }
 
 module.exports = {
-  getUserByName, addUser, addJoke, removeJoke,
+  getUserByName,
+  addUser,
+  getAllJokes,
+  getUsersJokes,
+  addJoke,
+  getJokeById,
+  removeJoke,
 };
