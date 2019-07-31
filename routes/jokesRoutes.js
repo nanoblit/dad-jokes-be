@@ -29,30 +29,22 @@ router.get('/:id', optionalAuthenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user ? req.user.sub : undefined;
-    const joke = await db.getJokeById(id);
-    if (!joke) {
-      res.status(404).json({ error: "Joke with given id doesn't exist" });
-    } else if (joke.isPrivate && joke.userId !== userId) {
-      res.status(404).json({ error: 'You are not authorized to see this joke' });
+    if (id === 'mine') {
+      if (!userId) {
+        res.status(404).json({ error: 'You are not authorized to see these jokes' });
+      } else {
+        const jokes = await db.getUsersJokes(userId);
+        res.status(200).json(jokes);
+      }
     } else {
-      res.status(200).json(joke);
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/mine', authenticate, async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user ? req.user.sub : undefined;
-    const joke = await db.getJokeById(id);
-    if (!joke) {
-      res.status(404).json({ error: "Joke with given id doesn't exist" });
-    } else if (joke.isPrivate && joke.userId !== userId) {
-      res.status(404).json({ error: 'You are not authorized to see this joke' });
-    } else {
-      res.status(200).json(joke);
+      const joke = await db.getJokeById(id);
+      if (!joke) {
+        res.status(404).json({ error: "Joke with given id doesn't exist" });
+      } else if (joke.isPrivate && joke.userId !== userId) {
+        res.status(404).json({ error: 'You are not authorized to see this joke' });
+      } else {
+        res.status(200).json(joke);
+      }
     }
   } catch (error) {
     next(error);

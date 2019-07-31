@@ -27,6 +27,10 @@ function getJokeById(id) {
     .first();
 }
 
+function getUsersJokes(userId) {
+  return db('jokes').where({ userId });
+}
+
 async function addJoke(data) {
   const [id] = await db('jokes').insert(data);
   return getJokeById(id);
@@ -41,5 +45,11 @@ async function removeJoke(id) {
 }
 
 module.exports = {
-  getUserByName, addUser, getAllJokes, addJoke, getJokeById, removeJoke,
+  getUserByName,
+  addUser,
+  getAllJokes,
+  getUsersJokes,
+  addJoke,
+  getJokeById,
+  removeJoke,
 };
