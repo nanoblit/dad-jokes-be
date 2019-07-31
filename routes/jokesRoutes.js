@@ -31,7 +31,7 @@ router.get('/:id', optionalAuthenticate, async (req, res, next) => {
     const userId = req.user ? req.user.sub : undefined;
     if (id === 'mine') {
       if (!userId) {
-        res.status(404).json({ error: 'You are not authorized to see these jokes' });
+        res.status(401).json({ error: 'You are not authorized to see these jokes' });
       } else {
         const jokes = await db.getUsersJokes(userId);
         res.status(200).json(jokes);
@@ -41,7 +41,7 @@ router.get('/:id', optionalAuthenticate, async (req, res, next) => {
       if (!joke) {
         res.status(404).json({ error: "Joke with given id doesn't exist" });
       } else if (joke.isPrivate && joke.userId !== userId) {
-        res.status(404).json({ error: 'You are not authorized to see this joke' });
+        res.status(401).json({ error: 'You are not authorized to see this joke' });
       } else {
         res.status(200).json(joke);
       }
