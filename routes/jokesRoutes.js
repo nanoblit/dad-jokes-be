@@ -2,22 +2,58 @@ const express = require('express');
 
 const db = require('../database/db');
 const authenticate = require('../middleware/authenticate');
+const optionalAuthenticate = require('../middleware/optionalAuthenticate');
 
 const router = express.Router();
 
-router.get('/', authenticate, async (req, res, next) => {
+router.get('/', optionalAuthenticate, async (req, res, next) => {
   try {
     const userId = req.user ? req.user.sub : undefined;
     const jokes = await db.getAllJokes();
     const jokesToSend = jokes.filter(joke => {
       if (joke.isPrivate && joke.userId === userId) {
         return true;
-      } if (joke.isPrivate) {
+      }
+      if (joke.isPrivate) {
         return false;
       }
       return true;
     });
     res.status(200).json(jokesToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:id', optionalAuthenticate, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user ? req.user.sub : undefined;
+    const joke = await db.getJokeById(id);
+    if (!joke) {
+      res.status(404).json({ error: "Joke with given id doesn't exist" });
+    } else if (joke.isPrivate && joke.userId !== userId) {
+      res.status(404).json({ error: 'You are not authorized to see this joke' });
+    } else {
+      res.status(200).json(joke);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/mine', authenticate, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user ? req.user.sub : undefined;
+    const joke = await db.getJokeById(id);
+    if (!joke) {
+      res.status(404).json({ error: "Joke with given id doesn't exist" });
+    } else if (joke.isPrivate && joke.userId !== userId) {
+      res.status(404).json({ error: 'You are not authorized to see this joke' });
+    } else {
+      res.status(200).json(joke);
+    }
   } catch (error) {
     next(error);
   }
