@@ -52,6 +52,7 @@ async function removeJoke(id) {
 }
 
 module.exports = {
+  getUserById,
   getUserByName,
   addUser,
   getAllJokes,
