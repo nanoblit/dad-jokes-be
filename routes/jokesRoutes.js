@@ -51,6 +51,25 @@ router.get('/:id', optionalAuthenticate, async (req, res, next) => {
   }
 });
 
+router.put('/:id', authenticate, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { joke, isPrivate } = req.body;
+    const userId = req.user.sub;
+    const jokeToChange = await db.getJokeById(id);
+    if (!jokeToChange) {
+      res.status(404).json({ error: "Joke with given id doesn't exist" });
+    } else if (userId !== jokeToChange.userId) {
+      res.status(401).json({ error: 'You are not authorized to change this jokes' });
+    } else {
+      const jokeToReturn = await db.updateJoke(id, { joke, isPrivate });
+      res.status(200).json(jokeToReturn);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/', authenticate, async (req, res, next) => {
   try {
     const { body } = req;
