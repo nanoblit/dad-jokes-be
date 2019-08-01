@@ -105,7 +105,7 @@ router.delete('/:id', authenticate, async (req, res, next) => {
     const userId = req.user.sub;
     const joke = await db.getJokeById(id);
     if (!joke) {
-      res.status(404).json({ error: 'Joke not found' });
+      res.status(404).json({ error: "Joke with given id doesn't exist" });
     }
     if (joke.userId !== userId) {
       res.status(401).json({ error: 'You are not authorized to delete this joke' });
