@@ -20,12 +20,12 @@ Users | Post | /signup | username: string, password: string | Creates a user pro
 Users | Post | /signin | username: string, password: string | Returns { message: string, token: string }
 
 ### /signup Post responses
-400 - { error: 'Userame and password are required' }
-400 - { error: 'Userame must be unique' }
+400 - { error: 'Userame and password are required' }  
+400 - { error: 'Userame must be unique' }  
 201 - user
 
 ### /signin Post responses
-401 - { error: 'Wrong username or password' }
+401 - { error: 'Wrong username or password' }  
 200 - { message: 'Logged in', token }
 
 # Jokes endpoints
@@ -41,20 +41,20 @@ Jokes | Delete | /jokes/:id | None | Removes a joke. Returns { joke: string, isP
 ### /jokes Get responses
 200 - jokes
 ### /jokes/:id Get responses
-404 - { error: "Joke with given id doesn't exist" }
-401 - { error: 'You are not authorized to see this joke' }
+404 - { error: "Joke with given id doesn't exist" }  
+401 - { error: 'You are not authorized to see this joke' }  
 200 - joke
 ### /jokes/mine Get responses
-401 - { error: 'You are not authorized to see these jokes' }
+401 - { error: 'You are not authorized to see these jokes' }  
 200 - joke
 ### /jokes/:id Put responses
-404 - { error: "Joke with given id doesn't exist" }
-401 - { error: 'You are not authorized to change this jokes' }
+404 - { error: "Joke with given id doesn't exist" }  
+401 - { error: 'You are not authorized to change this jokes' }  
 200 - joke
 ### /jokes Post responses
-400 - { error: 'Joke, userId and isPrivate are required' }
+400 - { error: 'Joke, userId and isPrivate are required' }  
 200 - joke
 ### /jokes/:id Delete responses
-404 - { error: "Joke with given id doesn't exist" }
-401 - { error: 'You are not authorized to delete this joke' }
+404 - { error: "Joke with given id doesn't exist" }  
+401 - { error: 'You are not authorized to delete this joke' }  
 200 - joke
