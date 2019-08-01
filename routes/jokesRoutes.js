@@ -10,15 +10,22 @@ router.get('/', optionalAuthenticate, async (req, res, next) => {
   try {
     const userId = req.user ? req.user.sub : undefined;
     const jokes = await db.getAllJokes();
-    const jokesToSend = jokes.filter(joke => {
-      if (joke.isPrivate && joke.userId === userId) {
+    const jokesToSend = await Promise.all(jokes
+      .filter(joke => {
+        if (joke.isPrivate && joke.userId === userId) {
+          return true;
+        }
+        if (joke.isPrivate) {
+          return false;
+        }
         return true;
-      }
-      if (joke.isPrivate) {
-        return false;
-      }
-      return true;
-    });
+      })
+      .map(async joke => {
+        const user = await db.getUserById(joke.userId);
+        joke.username = user.username;
+        joke.userId = undefined;
+        return joke;
+      }));
     res.status(200).json(jokesToSend);
   } catch (error) {
     next(error);
@@ -33,7 +40,12 @@ router.get('/:id', optionalAuthenticate, async (req, res, next) => {
       if (!userId) {
         res.status(401).json({ error: 'You are not authorized to see these jokes' });
       } else {
-        const jokes = await db.getUsersJokes(userId);
+        let jokes = await db.getUsersJokes(userId);
+        jokes = await Promise.all(jokes.map(async joke => {
+          joke.username = (await db.getUserById(joke.userId)).username;
+          joke.userId = undefined;
+          return joke;
+        }));
         res.status(200).json(jokes);
       }
     } else {
@@ -43,6 +55,8 @@ router.get('/:id', optionalAuthenticate, async (req, res, next) => {
       } else if (joke.isPrivate && joke.userId !== userId) {
         res.status(401).json({ error: 'You are not authorized to see this joke' });
       } else {
+        joke.username = (await db.getUserById(joke.userId)).username;
+        joke.userId = undefined;
         res.status(200).json(joke);
       }
     }
