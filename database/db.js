@@ -36,6 +36,13 @@ async function addJoke(data) {
   return getJokeById(id);
 }
 
+async function updateJoke(id, data) {
+  await db('jokes')
+    .where({ id })
+    .update(data);
+  return getJokeById(id);
+}
+
 async function removeJoke(id) {
   const joke = await getJokeById(id);
   await db('jokes')
@@ -45,11 +52,13 @@ async function removeJoke(id) {
 }
 
 module.exports = {
+  getUserById,
   getUserByName,
   addUser,
   getAllJokes,
   getUsersJokes,
   addJoke,
   getJokeById,
+  updateJoke,
   removeJoke,
 };
