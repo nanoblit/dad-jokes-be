@@ -58,3 +58,6 @@ Jokes | Delete | /jokes/:id | None | Removes a joke. Returns { joke: string, isP
 404 - { error: "Joke with given id doesn't exist" }  
 401 - { error: 'You are not authorized to delete this joke' }  
 200 - joke
+
+https://docs.google.com/document/d/1h8Kcb_38AkW_l_HFVg4soe0ekWX9HW0B5X-mB38R9y8/edit?usp=sharing
+
